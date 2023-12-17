@@ -1,0 +1,67 @@
+Package.json is a configuration of npm
+packages are also known as dependencies
+Our projects are dependent on dependencies(packages)
+There are 2 types of dependencies that we install
+1. dev dependencies 2. normal dependencies
+
+dev dependencies - For development of app
+normal dependencies - Used in production also
+
+ex- Parcel(a bundler package) dependency , we want as a dev dependency , because we don't want it in production, so we write
+npm install -D parcel
+
+In package.json , we can see "devDependencies": {
+    "parcel": "^2.10.3"
+  }
+  The carrot (^) symbol can also be replace by tile (~).
+  ^ symbol implies that when a version update is done from 2.10.3 to 2.10.4 by the package developers , npm will automatically upgrade to the minor version , but when a major version (3.0.0) is released , it will not upgrade.
+  ~ symbol upgrades the package to major version(patches) when it is released , otherwise will not upgrade anything.
+
+  If we don't want any upgrades, don't put ~ and ^ , so always we will use same version.
+
+  Package.json has approx versions of all packages , but package-lock.json locks the exact version of packages we are using in our project.
+
+Node modules contains code for all packages we installed with npm so then only our project can use the installed packages.
+  Transitive dependencies - We installed parcel , but 95 other packages came in node modules along with parcel , because parcel as a project has it's own dependencies on some packages and those packages have dependencies on some other packages , this is known as transitive dependencies.
+
+package.json is present in every dependency in node-modules because every module is dependent on other dependency  
+
+Such a large folder of node modules , do we need it in production or in Git?
+NO!!! so put it in gitignore.
+
+Why we don't need node modules in git?
+Suppose we delete node modules or we didn't include it in git , but we have package.json and package-lock.json, which will help us recreate all the node modules, by using command "npm install" , that's it!!.
+
+Dev build command - npx parcel index.html
+npx is used for executing our package.
+
+We used CDN links for React and ReactDOM , which is not a god way to use them , because a network call is made to fetch react code and also when the version is changed , we have to change the CDN link too , that's why we install react into node modules by npm , to reduce cost of fetching from a network call.Also versions of react are managed by npm.
+
+we don't put -D in npm install react , because we want is as normal dependency ,want it in production too.
+
+We have to use type="module" in script tag in index.html , because normal js files don't use export or import.
+ex- <script type="module" src="./App.js"></script>
+
+Some things Parcel does for your project -
+- Dev Build
+- Local Server
+- HMR = Hot Module Replacement
+(When we save our change, automatically server s refreshed with new changes)
+- File Watching Algorithm - written in c++
+- Caching - Faster Builds
+(It caches our changes , so if we make a change , the next build doesn't take much time)
+- Image Optimization
+(Image loading is most expensive operation in our website , and parcel does optimization of the operation.)
+- Minification
+- Bundling
+- Compress
+
+Prod Build Command - npx parcel build index.html
+
+The dist folder which is generated when dev or prod build is done with parcel , contains the optimized code and files , which is being referred by the dev server or prod server.
+
+Do we need to push parcel-cache and dist folders to github?
+Nooo , because any files which can be generated again , need not be pushed to github, so we put them in gitignore
+(similar to node modules)
+
+We can make our app host in oldest of browers using browserslist module in npm , we need to add browserslist in package.json, see there for example
