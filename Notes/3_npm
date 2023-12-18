@@ -1,0 +1,50 @@
+Instead of executing npx parcel index.html , 
+we can put them in scripts in package.json.
+ex - "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html",
+    "test": "jest"
+  }
+So now we can run the same coomand by using npm run start , npm run build(for prod build)
+
+npm run start can also be written as npm start (this was reserved by npm only for start)
+the same doesn't work for npm run build
+
+JSX is not part of React , we can create react application without JSX
+JSX makes developers work easy
+JSX is not HTML inside javascript ,JSX is HTML "like" syntax
+JS engine does not understand JSX , it understands ECMAscript
+
+JSX is transpiled before it reaches the JS Engine.
+const jsxheading = <h1 id="heading">Namaste React using JSX</h1> will give error in console , because it is not pure javascript ,it is having JSX.
+PARCEL transpiles the JSX before it reaches JS engine with the help of "Babel" package.
+Babel converts JSX to React code which JS engine understands
+JSX => React.createElement => ReactElement- JS object => HTMLelement (on rendering)
+
+In JSX , attributes has to be in Camel Case 
+
+In case of multi line JSX , we need to wrap it inside () so Babel understands where JSX is starting and ending
+
+Everything in react is a component
+React Component are 2 types
+1. class based components - older components
+2. functional components - new standard
+
+React functional component is just a JS function.
+The function which returns a piece of JSX is a functional component
+which also means returning a React element(because JSX is converted to rect element by Babel)
+
+Component Composition -> when 2 components are composed together
+That means one component is used inside another component
+
+We can write any JS expression inside a JSX by using {}
+
+Cross side scripting attack - Suppose we fetch data from an Api , and that data is malacious and is attacking our data , 
+if we display that data using JSX , we need not worry , JSX does sanitizing of whatever we are going to display on website.
+So we need not worry about an attack through a bad API.
+
+We can right functional components inside other functional components (functional composition) in 3 ways- 
+<Title /> , <Title></Title> , {Title()}
+
+At the end of day , all these react components and react elements are javascript , so we 
+can write them as {Title()} and {title} respectively.
