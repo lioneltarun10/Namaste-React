@@ -1,0 +1,44 @@
+Components are just like functions so that we can reuse them again and again.
+In JSX , when we give inline css , it's given inside a JS object.
+To use javascript inside JSX , we need to use JS in between {} braces.
+That's why if we create a styleCard object , with css properties , to give it to an element in JSX , give as below
+<div className="res-card" style={styleCard}>
+
+For Inline css , we arite as below
+<div className="res-card" style={{
+      backgroundColor:'#f0f0f0'
+    }}>
+The first {} braces indicate , we are going to write JS inside it , the second {} braces indicates a JS object.
+
+Props is short form for properties.
+If we want to pass data dynamically to a component , we can pass it through props.
+Props are just normal argumants to a function.
+Passing a prop to a component is nothing but passing an argument to a function.
+Prop is a JS Object.
+We can also destructure the props on the fly.
+i.e const RestaurantCard = (props) is same as
+const RestaurantCard = ({resName,cuisine})
+
+
+Config driven UI
+When website UI is driven by Config (data), which comes from backend.
+i.e- Different UI for swiggy in delhi and bangalore.  
+
+When looping with for loops or Map or any other loops , we alwasy need to give unique keys to the components , otherwise the app will take a big performance hit , by unique key , the app will be optimized.
+Reason for this is , suppose there are 5 components at same level as child of some parent component in the HTML tree, if we want to add new component 
+
+Without unique key Situation - React doesn't know which component is new , so it cleans all components and re-renders all components along with new component.
+
+With Unique key Situation - React know which component is new , and it only renders the new component this time , and previous components need not be re-rendered.
+i.e resList.map((restaurant) => (
+            <RestaurantCard key={restaurant.data.id} resData={restaurant}/>
+            ))
+
+Due to which the performance is optimized.
+
+Sometimes developers use Index of map as key to the components. which is not recommened by the official Reacts docs.
+i.e  resList.map((restaurant,index) => (
+            <RestaurantCard key={index} resData={restaurant}/>
+            ))
+
+Not using keys (not acceptable) <<< index as key <<< unique id (best practice)
