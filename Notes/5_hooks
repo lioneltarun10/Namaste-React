@@ -1,0 +1,59 @@
+If we keeps our components in a seperate folder , we need to export them and import in our app.js file and use it.
+
+Never keep hardcoded data and URL links in component files. Keep them in seperate folder like utils or common.
+
+There are 2 types of import and export.
+
+EXPROT - default export and named export.
+
+We cannot have multiple default exports in a file.
+When we want onl one thing to export in a file , we use dafault export.
+
+If we want to export multiple things in a file , we use named export.
+
+IMPORT - when we have named export , we need to have {} braces in import and a default export doesn't need {} braces in import.
+
+We can use named export and default export at once on same component , it won't create a problem.
+
+React is faster because it can do faster DOM manipulation , efficient DOM manipulation , Virtual DOM , Diff Algorithm.
+React is only good at DOM operations.
+
+React Hooks
+Hook is a normal JS function given to us by React.
+
+Whenevr a state variable changes , React re-renders the component.
+React keeps the data layer in sync with the UI layer.
+
+React uses - 
+Reconciliation Algorithm (React Fiber)
+
+Virtual DOM is a representation of actual DOM.
+Virtaul DOM is nothing but a JS object which represents ACTUAL DOM.
+
+Diff Algorithm - It finds the difference between the one virtual DOM and the updated Virtual DOM.
+
+Suppose there are 7 restaurants and on click of button we want to filter them based on rating .
+So suppose after filtering , 3 restaurants are left.
+
+Diff algo will calculate the difference between old virtual DOM and updated virtual DOM(generated on click of button) , which is 4 nodes(restaurants) and then it updates the actual DOM on every render cycle.
+
+Finding out the diff between 2 HTMl is difficult , but finding difference b/w 2 objects is easy.
+
+REACT DOES EFFICIENT DOM MANIPULATION BECAUSE IT HAS VIRTUAL DOM , A DIFF ALGORITHM WHICH IS VERY EFFICIENT IN DOM MANIPULATION.
+
+When we call setState , it triggers the diff algorithm and we get updated UI. State variables are a way for react to key a track of data , and when we set it to new data , react runs diff algo and we get updated UI.
+
+we can also write state variables as - 
+const arr = useState(resList);
+
+  const [listOfRestaurants,setListOfRestaurants] =arr;
+
+  because useState returns an array , and we are just destructuring it.
+
+  We can also write as
+const arr = useState(resList);
+
+const listOfRestaurants = arr[0]
+const setListOfRestaurants = arr[1]
+
+These are just basic concepts of JS arrays.
