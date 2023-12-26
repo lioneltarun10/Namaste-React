@@ -1,0 +1,95 @@
+Monolith architecture - It is a big project with code of API , UI , AUTHENTICATION, DATABASE CONNECTIVITY AND NOTIFICATION SYSTEM , all written in same project. One change in the project leads to compilation of who,e project.
+
+Microservices Architecture - There are different services for different uses , like backend service, UI service , authentication service , DB service , SMS service , email service. All these sevices combined forms a project. The services talk to each other depending on use cases.
+
+These seperate services is known as seperation of concerns and signal responsibility principle.
+
+In monolith , the whole project has to be in one language like java,
+but in microservices , we can have different tech stack for different services.
+
+All these services run on their own specific ports,i.e UI services running on localhost:1234 .
+At end of day , all these ports can be mapped to domain name.
+
+ex- :3000 port of SMS mapped to /SMS domain name. So if backend wants to connect to SMS service , it will call /SMS domain name.
+
+Let's learn how react connects to outside world , that is making API calls.
+
+Taking data dynamically from API instead of having data in our local system.
+There are 2 ways - 
+
+1) As soon as page loads , we can make API call , and when data comes , we render the UI.
+Suppose API call takes 500ms , then we render after 500ms.
+
+2) As soon as page loads , we render our UI , now we will make an API call , after data comes , we re-render our application.
+
+In react we will always use 2nd approach , this is better approach , this gives better UX (user experience).
+We don't have to work about re-rendering because react's render cycles are very optimized and efficient.
+
+useEffect hook-
+
+As soon as our component renders , the useEffect's callback function will be called.
+First the component's code will run , then useEffect will run.
+This hook will help us in implementing second approach of calling API.
+
+To fetch data , we will use fetch API of browser , which the JS engine has in it.
+
+By simply fetching from swiggy API , we will get CORS error , that we cannot call frol different origin to a different origin.
+CORS - CROSS ORIGIN RESOURCE SHARING
+
+We can use CORS chrome extension to make this error go away.
+
+So as soon as we recieved the API data , we will update our data which we are using to render our component , then react will re-render after data gets updated. (step 4 in approach 2) 
+
+We can use optional chaining to handle the data in good way.
+ex- json?.data?.cards[5]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+
+Now before fetching the data , the component is rendered with empty data , so we can show a spinner or text that it is loading.
+i.e if(listOfRestaurants.length === 0){
+  return <h1>Loading...</h1>
+}
+
+But showing this way is not a good way.
+
+Shimmer UI
+shimmer effects are loading indicators used when fetching data from a data source that can either be local or remote. It paints a view that may be similar to the actual data to be rendered on the screen when the data is available.
+
+So on load of page shimmer UI is rendered, then APi call is made(by useEffect hook) , after data is fetched , we re-render real data. 
+
+Conditional Rendering - Rendering based on a condition is known as conditional rendering.
+
+we are rendering shimmer UI when no data is there , this is an examle of conditional rendering.
+
+More on useState - 
+
+When we use local variables for updating data , and we expect the UI will change when the variable gets updated , we do not see that happening because React doesn't know if the variable got updated or not.
+
+That' why we use specail powerful variable , which is state variable with help of useState hook , which react keeps a track off. 
+So when we change the state variable using set function of that variable , React will re-render the component which is using this state variable. This way we can change the UI based on state of variable.
+
+Important thing to remeber is , it will re-render the whole component which has this state variable.
+
+Now a doubt is there that we define state variables as
+const [btnNameReact,setBtnNameReact]
+
+but it is a const variable , how are we able to change the value of a const variable?
+The answer is , as soon as we perform an action which changes the value of state variable , React re-renders the whole component , and this time , this const [btnNameReact,setBtnNameReact] is whole new different const variable , and the variable value is set to the updated value. 
+
+Also when we re-render the component , only the things which gets changed in the UI is refreshed , all other things do not get refreshed , this is happening due to diff algorithm and reconciliation algorithm.
+
+So when we change the value of state variable , React re-conciliation algorithm , sees the diff between th old virtual DOM and new Virtual DOM , and it changes only the exact changed part in the actual HTMl.
+
+Binding - 
+We bind the value of a input box to a state variable in the following way - input type="text" className="search-box" value={searchText}/>
+
+So now the state variable is binded to the inout box , and the value inside the state variable is visible in the inout box. That's why when we type something inside the input box , nothing is changed  because value is set to the value of state variable.
+SO we need to use onChange handler in this way - 
+<input type="text" className="search-box" value={searchText} onChange={(e)=>{
+                setSearchText( e.target.value)
+              }}/>
+
+Whenever we change the local state variable , react re-renders the component.
+whenevr state vaiables update, react triggers a reconciliation cycle(re-renders the component)              
+
+So when we type something in the input box , the value of who's input is binded to state variable , react re-renders whole component with each change in value of input box , because state variable is getting changed.
+
+Life Lesson - Code slow , then only we can complete the code properly and correctly without debbuging.
