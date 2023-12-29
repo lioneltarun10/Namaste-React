@@ -1,0 +1,164 @@
+import { RouterProvider, createBrowserRouter, useRouteError } from "react-router-dom"
+
+More on useEffect
+
+if no dependency array => useEffect is called on every component render
+if dependency array is empty = [] => useEffect is called on intial render(just once)
+if dependency array is [btnNameReact] => useEffect called everytime btnNameReact is updated
+
+More on useState - 
+Never use useState outside of your component
+i.e - const [searchText,setSearchText] = useState("")
+
+const Body = () =>{
+
+  //Local  State Variable - Super powerful variable
+
+  const [listOfRestaurants,setListOfRestaurants] = useState([]); 
+const [filteredRestaurant,setFilteredRestaurant] = useState([]);
+ 
+useState is used to create local state variables inside functional component,so always use useState inside component , not outside it.
+Try to call useState at top of component.
+
+Never use useState in a if else condition
+
+react-router-dom ->
+npm i react-router-dom
+
+createBrowserRouter - it is the configuration that will tell browser router that on certain path, what page to laod . 
+Configuration is an array(list) of object , each object defines a different path
+i.e const appRouter = createBrowserRouter([
+    {
+      path:'/',
+      element:<AppLayout />
+    },
+    {
+      path:'/about',
+      element:<About />
+    }
+  ])
+
+  Now we have created the configuration , we need to provide this configuration.About
+
+  RouterProvider - it provides our configuration to our App.
+  It is a component which we render in our root element.
+  root.render(<RouterProvider router={appRouter}/>)
+
+  This is how we create different routes in our app
+
+  If we give random route , react-router-dom through a Unexpected Application Error!
+  This is a error page which react-router-dom has created. 
+
+  Let's create our own error page now by crating a error component
+  const appRouter = createBrowserRouter([
+    {
+      path:'/',
+      element:<AppLayout />,
+      errorElement:<Error />
+    },
+
+    How do we know if anything is a hook? 
+    it will have "use" at start of the function.
+    ex- useRouteError
+
+    useRouteError - it's a hook given to us by react-router-dom.
+    This hook gives more information about the error.
+
+    Now we can have children routes also for a component as below - 
+    path:'/',
+    element:<AppLayout />,
+    children:[
+      {
+        path:'/',
+        element:<Body />
+      },
+      {
+        path:'/about',
+        element:<About />
+      },
+      {
+        path:'/contact',
+        element:<Contact />
+      }
+    ],
+  
+    UseCase - Earlier in applayout component we were rendering header and Body. But suppose we want header for our 
+    about and contact componenet also , then we give all three components body , about and contact as children of applayout route and
+    use <Outlet /> component provided by react-router-dom , which provides the correct component to render in applayout according to the path given .
+
+    const AppLayout = () => {
+      console.log(<Body />);
+      return (
+      <div className="app">
+          <Header />
+          <Outlet />
+      </div>
+      )
+    }
+
+    All the children according to the routes , replace the <Outlet /> component.
+    This way we can have header component for all children routes of applayout component. 
+
+
+    Now we want to link our home , about us , contact us in the header component to the appropriate routes.About
+    Remember , In react , to route to a page , never use anchor tags. 
+    i.e - <li><a href='/about'>About Us</a></li>
+
+    Because when we use anchor tag , our whole page got reloaded , which is costly 
+
+    So instead we can use Link component from react-router-dom. 
+    It works exactly as anchor tag , the only difference is the way we write it. 
+
+    <Link to="/contact">Contact Us</Link>
+
+    Always use Link component to navigate to different route , because it will not reload the whole page, a huge performance gain compared to anchor tag. 
+    It will just refresh our component , instead of reloading our whole page.
+
+    This brings us to the concept of React being a 'Single Page application'
+
+    Traditionally , we used to have different HTML files for different pages , and on navigating to different page by anchor tag , it reloads the how page.
+
+    But now in react , we have only one page <Applayout /> , and we are just replacing the component inside the page when we navigate to different route through Link component , the new component that replaces the 
+    <Outlet /> component is just refreshed , instead of whole page (header and footer) reloading again.
+
+    We have 2 types of routing in web applications - 
+    1) client side routing 
+    2) Server SIde routing 
+
+    Server side routing - when we navigate to new page ,we makes a network call to the server , and brings the about.html page and loads it on our screen.
+    Client side routing - we already have all the components with us when we first loaded the page , so now when we navigate to new route , it just loads the component which is being referred , instead of making a network call to bring the new page.
+
+This is the explanation for single page applications , it's just a single page , and only components are getting displayed based on routes via client side routing.
+Only network call we made in client side routing is API call to fetch data.
+
+Dynamic Routing - 
+We want different routing for each restaurant which can be achieved by dynamic routing.
+i.e /restaurant/{restaurantId}
+This can be achieved like below - 
+{
+        path:'/restaurants/:resId',
+        element:<RestaurantMenu />
+      }
+
+ So each restaurantId has a unique route , on load of which that restaurant's menu is loaded.    
+ To load each restaurant's menu in RestaurantMenu component , we make an API call. 
+
+ useParams hook - react-router-dom
+
+ This hook takes what is passed as restarantId in the URL and gives us an object. The restarantId that was passed when we click on a restaurant card , is taken by using this hook.
+ Restaurant Id is passed into URL in the below manner - 
+  {
+              filteredRestaurant.map((restaurant) => (
+              <Link key={restaurant.info.id} to={'/restaurants/' + restaurant.info.id}><RestaurantCard resData={restaurant}/></Link>
+              ))
+             }
+
+More on Link Component - 
+
+Link is a component given to us by react-router-dom  but behind the scenes Link is using anchor tab.
+That's why when we see the code in console where Link was used , we wouldn't find any Link tag , but instead we will find anchor tag.
+
+Link is a wrapper over anchor tag.
+When we use Link component, react keeps a track on that route , that we should not load the whole page , but instead just render the component associated with that route.
+            
+

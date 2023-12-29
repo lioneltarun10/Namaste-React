@@ -1,13 +1,14 @@
 import RestaurantCard from "./RestaurantCard"
 import { useState,useEffect } from "react"
 import Shimmer from "./Shimmer";
+import { Link } from "react-router-dom";
 
 const Body = () =>{
 
   //Local  State Variable - Super powerful variable
 
   const [listOfRestaurants,setListOfRestaurants] = useState([]); 
-const [filteredRestaurant,setFilteredRestaurant] = useState([])
+const [filteredRestaurant,setFilteredRestaurant] = useState([]);
 
 const [searchText,setSearchText] = useState("")
 
@@ -24,12 +25,15 @@ const fetchData = async () =>{
 
   console.log(json);
   //optional chaining
-  setListOfRestaurants(json?.data?.cards[5]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
-  setFilteredRestaurant(json?.data?.cards[5]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
+  setListOfRestaurants(json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
+  setFilteredRestaurant(json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
+  console.log( listOfRestaurants);
+  console.log(filteredRestaurant);
 }
 
 
 console.log(" body rendered");
+console.log('3 '+ listOfRestaurants);
 
     return listOfRestaurants.length === 0? (
     <Shimmer />
@@ -67,7 +71,7 @@ console.log(" body rendered");
              {/* RestaurantCard */}
              {
               filteredRestaurant.map((restaurant) => (
-              <RestaurantCard key={restaurant.info.id} resData={restaurant}/>
+              <Link key={restaurant.info.id} to={'/restaurants/' + restaurant.info.id}><RestaurantCard resData={restaurant}/></Link>
               ))
              }
             
