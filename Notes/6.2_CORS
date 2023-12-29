@@ -1,0 +1,4 @@
+We can remove CORS chrome extension , and use CORS proxy to make an API call.
+
+When include CORS proxy before our API URL , what is happening is , the CORS PROXY is making an internal call for us , and fetching the data and giving us the dat ,
+instead of us making the API call.
