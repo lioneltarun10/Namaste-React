@@ -6,13 +6,22 @@ const User = ({name}) =>{
    const [count2,setCount2] = useState(1)
 
    useEffect(()=>{
+       
+    const timer = setInterval(()=>{
+        console.log("Namaste React OP");
+    },1000)
+    console.log("useEffect");
 
+     return ()=>{
+          console.log("useEffect return");
+          clearInterval(timer)
+     }
    },[])
 
 //    async function getUserInfo(){
 //     const data = await
 //    }
-
+      console.log("render");
     return (
         <div className="user-card">
             <h1>Count = {count}</h1>

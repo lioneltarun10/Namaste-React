@@ -15,25 +15,31 @@ class UserClass extends React.Component{
         console.log(this.props.name + " child constructor");
     }
 
-    async componentDidMount(){
+    componentDidMount(){
+
+        this.timer = setInterval(()=>{
+            console.log("Namaste React OP");
+        },1000)
         console.log(this.props.name + " child Component Did Mount");
 
-        //API CALL
-        const data = await fetch("https://api.github.com/users/lioneltarun10")
-        const json = await data.json()
-
-        console.log(json);
-        this.setState({
-            userInfo:json
-        })
     }
 
-    componentDidUpdate(){
+    componentDidUpdate(prevProps,prevState){
+
+        if(this.state.count != prevState.count){
+             //code
+        }
+
+        if(this.state.count2 != prevState.count2){
+            //code
+        }
+
         console.log("Component Did Update");
     }
 
     componentWillUnmount(){
         console.log("Component unmounted");
+        clearInterval(this.timer)
     }
 
 

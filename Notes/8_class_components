@@ -191,8 +191,125 @@ when our component is unmounted from the webpage , then componentWillUnmount is 
 That is , when we go away from that page , componentWillUnmount is called.
 
 Important!!
-Never compare react life cycle method to Functional component.
+Never compare react life cycle methods to Functional component.
 
 useEffect() is not equal to componentDidMount().
 
 Now,componentDidMount is called after initial render but componentDidUpdate is called after every subsequent render.
+
+So we now know that componentDidUpdate is called after every render.
+
+in functional components , useEffect({
+
+},[count,count2]) , means every time count or count2 updates , useEffect is called.
+How can we implement that in class based components?
+
+  componentDidUpdate(prevProps,prevState){
+
+        if(this.state.count != prevState.count || 
+            this.state.count2 != prevState.count2){
+             //code
+        }
+
+        console.log("Component Did Update");
+    }
+
+ suppose we want to do something when count changes and something else when count2 changes , we use 2 useEffects in functional components.
+ In class components,
+  componentDidUpdate(prevProps,prevState){
+
+        if(this.state.count != prevState.count){
+             //code
+        }
+
+        if(this.state.count2 != prevState.count2){
+            //code
+        }
+
+        console.log("Component Did Update");
+    }   
+
+
+    What's the use of componentWillUnmount method?
+    componentWillUnmount is called when we change our page.
+    
+    But how many pages we have in our app??
+    Only one page , our app is a single page application.
+    We are only rendering different components in same page.
+
+    So when we are changing component , the concept of page change is happening ,and "we need to clear lot of things before leaving the page".
+
+    Single page application has it's own disadvantages.
+    Suppose we used setInterval in our application 
+     componentDidMount(){
+
+        setInterval(()=>{
+            console.log("Namaste React OP");
+        },1000)
+        console.log(this.props.name + " child Component Did Mount");
+
+    }
+
+    when we change page , this setInterval is not removed. The setInterval goes on even when we change page because when we are changing page , we are not reloading the page , we are just rendering different component because it's a single page application. Important!!!!
+
+    Suppose we visit our "about Us" page again , now setInterval is again invoked , and two interval's will run now. 
+
+    This will blow up our app , performance loss is happening .
+
+    We will never know that it is running if we hadn't written a console log.
+
+    So why do we unMount?
+    The reason is above , we need to clear the mess that we created before leaving the page.
+
+    That's why componentWillUnmount is used to clear the mess before leaving the page.
+
+    componentDidMount(){
+
+        this.timer = setInterval(()=>{
+            console.log("Namaste React OP");
+        },1000)
+        console.log(this.props.name + " child Component Did Mount");
+
+    }
+
+    componentWillUnmount(){
+        console.log("Component unmounted");
+        clearInterval(this.timer)
+    }
+
+    Suppose we write setInterval in useEffect in functional component , it will behave the same way as it behaved in class component.
+
+    Then how to stop the setInterval?
+    Important!!!
+    We can return a function from useEffect.
+    That function is called when we are unmounting our component.
+
+    useEffect(()=>{
+       
+    // setInterval(()=>{
+    //     console.log("Namaste React OP");
+    // },1000)
+    console.log("useEffect");
+
+     return ()=>{
+          console.log("useEffect return");
+     }
+   },[])
+
+So we can clear pur setInterval from this function that is being returned.
+
+useEffect(()=>{
+       
+    const timer = setInterval(()=>{
+        console.log("Namaste React OP");
+    },1000)
+    console.log("useEffect");
+
+     return ()=>{
+          console.log("useEffect return");
+          clearInterval(timer)
+     }
+   },[])
+
+See the life cycle diagram again from
+website - https://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/
