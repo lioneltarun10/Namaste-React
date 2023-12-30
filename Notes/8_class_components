@@ -1,0 +1,198 @@
+A functional component is a normal JS function.
+Similarly , a class based component is a normal JS class.
+
+To make a class based component , we need to extend our class to React.Component - 
+class UserClass extends React.Component
+
+We will have a render method inside the class component , which returns a piece of JSX.
+
+To use props in class components , we have a constructor wehich will call super constructor passing props as argument.
+ constructor(props){
+        super(props)
+
+        console.log(props);
+    }
+
+
+Using super constructor with props arguments basically allows accessing this.props in a Constructor function.
+
+Now , how to use state variables inside class components.
+Earlier their used to be no HOOk and functional components.
+There's a different way of creating a state variable inside class component.
+
+When we say we are loading a class component on webpage , it means we are creating an instance of that class.
+Constructor is best place to create state variables.
+We crate state variable inside class component in this way - 
+constructor(props){
+        super(props)
+        this.state = {
+            count: 0
+        }
+        
+    }
+
+ The state variable in the constructor is a big object which contains all the state variables.
+
+ Even in functional components , even though we write different useState hook's for each state variable , behind the scenes all the state variables are stored inside one big state object.
+
+ Now we want to update our state variables - 
+
+ Never update the state variables directly in a class component
+ i.e this.state.count = this.state.count +1  -> don't do this way  
+
+ We get a setState function from React.Component , which takes the object where we need to update our state variables.
+ i.e  this.setState({
+                        count:this.state.count + 1,
+                        count2: this.state.count2 +1
+                    })
+
+ This setState function will only update the state variables that we are giving as object in setState function , it will not touch other state variables in the this.state object.         
+
+ Lifecycle of class based component - 
+
+ when the class component loads , then a new instance of that class is created . the first thing that runs in the class is constructor , after it the render method is called.  
+ This is the case when the parent component(About component) is functional component and the child component is class based component(UserClass)
+
+ When both paraent and child components are class based, the lifecycle is -
+ parent constructor
+ parent render
+ child constructor
+ child render
+
+ React also gives us another method in class components which is "componentDidMount"
+
+ The lifecycle is -> constructor -> render method -> after our componet is loaded or mounted on the page then our componentDidMount method is called.
+
+ So if both our parent and child has this componentDidmount methods , then lifecycle is - 
+
+ parent constructor
+ parent render
+ child constructor
+ child render - > child is mounted after this render call
+ child componentDidMount - > parent component is still loading or did not mount on page
+ parent componentDidMount -> parent component is mounted , then componentDidMount is called
+
+ ComponentDidMount usecase -> to make API calls.
+ But why?
+ In functional component , we make api calls inside useEffect , because we load our component first onto the page , then useEffect will run inside which we make api call , then our component re-renders with new data on the page.
+
+ Similarly , componentDidMount runs after our component is loaded(mounted) onto page , that's why we make api call in this method , so then our component re-renders again with the new data.
+
+ Now , when we have 2 class components , it means we are having two instances of same class.
+
+ * lifecycle when 2 child class components are inside parent class component - 
+ We might think the below order is correct - 
+- parent constructor
+- parent render
+  - first constructor
+  - first render
+  - first compoentDIdMount
+  - second constructor
+  - second render
+  - second compoentDidMount
+- parent componentDidMount 
+
+This is wrong!!!!!!!!
+The real order is -
+
+- parent constructor
+- parent render
+  - first constructor
+  - first render
+  - second constructor
+  - second render
+  - first compoentDIdMount
+  - second compoentDidMount
+- parent componentDidMount 
+
+The reason we can find from react life cyle diagram - 
+website - https://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/
+
+React component mounting has 2 phases - 
+render phase and commit phase
+Render Phase - 
+constructor is called, then render is called
+
+then Commit Phase - 
+React updates DOM and refs , then componentDidMount is called.
+(That's why API calls are made in componentDidmount Phase)
+
+That's why when there are multiple child components inside parent component , the react optimizes the rendering by batching the render phase of all child components together , after render phase is done for all child components , then the commit phase of all components is batched and started.
+
+That is how it is rendering the components , but why is react doing in this order?
+
+When we are loading a component , DOM manipulation is the most expensive process.
+Render phase is very fast because in render phase React triggers reconciliation algorithm , it finds the diff betwwen the virtual dom's . But commit phase takes time , which is actual DOM manipulation.
+
+That's why render phase is batched for all components and commit phase is batched for all components.
+"That is why React is very FAST"
+
+<Render Phase begins>
+- parent constructor
+- parent render
+  - first constructor
+  - first render
+  - second constructor
+  - second render
+  <Render Phase ends>
+  <Commit phase begins>
+  <DOM UPDATED - IN SINGLE BATCH>
+  - first compoentDIdMount
+  - second compoentDidMount
+- parent componentDidMount
+<Commit phase ends> 
+
+Making API calls - 
+
+We can make componentDidMount method as async and we can make API call inside it.
+i.e 
+async componentDidMount(){
+        //console.log(this.props.name + " child Component Did Mount");
+
+        //API CALL
+        const data = await fetch("https://api.github.com/users/lioneltarun10")
+        const json = await data.json()
+
+        console.log(json);
+        this.setState({
+            userInfo:json
+        })
+    }
+
+LifeCycle - 
+
+Mounting - 
+first constructor of UserClass is called , then render is called , which renders our UI with dummy data or shimmer UI. 
+Then componentDidMount is called , which makes API call , then we are updating our state variable with our api data.
+
+Updating - 
+When we update our state variables , React triggers render method again , then DOM manipulation takes place and we render our UI with updated Data.Then "componentDidUpdate" is called.
+
+lifecycle - 
+"Mounting "cycle starts
+constructor(dummy data populated)
+render(dummy)
+webpage loaded with dummy data
+componentDidMount is called
+<api call>
+this.setState -> state variable updated
+"Mounting" cycle ends
+
+"Update" cycle begins
+
+render(api data)
+website loaded with API data
+componentDidUpdate is called
+
+"Update" cycle ends
+
+componentWillUnmount - 
+when our component is unmounted from the webpage , then componentWillUnmount is called.
+That is , when we go away from that page , componentWillUnmount is called.
+
+Important!!
+Never compare react life cycle method to Functional component.
+
+useEffect() is not equal to componentDidMount().
+
+Now,componentDidMount is called after initial render but componentDidUpdate is called after every subsequent render.
