@@ -1,0 +1,105 @@
+Important principle in React - 
+
+Single Responsibility Principle - Each function or class (components) should have a single responsibility.
+
+Only single responsibility of restaurantCard should be to show restaurant card. Header components single responsibility is to show Header.
+
+Modularity - Break down our code into small modules(like we broke down our functionality into small components) , then code becomes more maintainable and testable.
+
+so if we write code in modular fashion and follow single responsibility principle , we get the features of reusability , maintainable , testable.
+
+So is there a component that is not following single responsibility principle in our code?
+(There's not hard and fast rule of single responsibility principle)
+
+Hooks are super powerful utility functions given to us by React.
+
+custom Hooks - we can create our own hooks
+
+We will take out some functionality from our component and abstract that inside our custom hook , so that our hook and component become more modular and becomes more readable. 
+This will optimize our app.
+
+Creating custom hook is not mandatory but it makes our code more readable , modular , more reusable.
+
+RestaurantMenu component - 
+It fetches the data and displays data onto the UI.
+
+Don't the restaurantMenu component should only worry about displaying the menu , and should not worry about how to fetch the data?
+
+Similar to useParams hook , which does ssme functionality abstractly (without us knowing how it's done) , we should create a custom hook to fetch restaurant menu data.
+
+Then only responsibility of restaurant menu component is to display the menu , and code also becomes readable and simpler.
+
+we created a useRestaurantMenu custom hook , which abstracts the logic of fetching restaurant menu , and provide our restaurantMenu component with the menu data.
+
+Important!!!
+Code should be light weight , readable , clear , simple , modular ,testable , single responsibility , then you can become a good senior developer
+
+We want to develop a feature , where if a user is not having internet connection , we must show some text that he's offline.
+
+We will develop a customHook for this.
+
+Thinking process behind a custom Hook development - 
+First finalize input(specific information for our task) and output(result we want to send).
+
+We have a event listener given by browser , which can tell if we are online or not.
+Now we want to add that event listener only once to our webpage , which means we can call useEffect with empty dependency array.
+
+Optimizing the preformance of large scale app - 
+
+Main application of parcel (bundler) is bundling all files. That is , all JS files is bundled into just once JS file , that is everything happening on webpage is happening because of one JS file.
+We can see that js file in network -> JS in inspect of webpage.
+
+When we have lots of components , our JS file size increase. We cannot build large scale production ready applications without taking care of this file size. Otherwise it will slow down our app.
+
+We need to break down our application into smaller files. That is break our JS file into smaller files.In that way , it will not take time to load large file onto webpage , which will increase performance.
+Does that mean we should not use bundler? No!!
+
+We will try to make smaller bundles of our files.(not everything into one file)
+
+This process is also known as 
+chunking
+code splitting
+dynamic bundling
+lazy loading
+on-demand loading
+dynamic import
+
+How to make smaller bundles?
+we can do logical code spliting , that is , we can make bundles depending on some major feature in application.
+
+EX- for makemytrip website , we can make a bundle just for flights component, then just for hotels component.
+
+This way we can split our application into smaller bundles(smaller application) , so that our bundle doesn't take time to load larger file.
+
+Ex- we have grocery component in a webpage(like instamart in swiggy) , which is a lot bigger component , which has a lot of smaller components.
+
+So our grocery is a big feature with lots of child components , but bundler has bundled it into a JS file along with other features of app.
+
+Now we want to logical distribute our application , so that grocery and alll components of grocery needs to come from another bundle.
+
+We can do that by lazy loading in app.js for grocery component.
+Initially when we go to our app , grocery component should not be there in our bundle , and only when we visit our grocery component , it should load onto page.
+
+lazy() - given to us by React which does lazy loading
+
+We will comment our import for Grocery component in app.js and do lazy loading int he below manner - 
+
+const Grocery = lazy(()=> import("./components/Grocery"));
+
+This one line code has lot of power in it.
+Now when we visit grocery , we load new grocery js file in the network , that is we splitted our code into 2 JS bundles.
+
+Main bundle does not have code for grocery component.
+
+But we see error that we cannot load the page. because this grocery js file took 12ms to load onto page and react is very fast. React tried to render(load) grocery component but grocery code was not there , as it took time to load onto page , so grocery component was suspended and threw an error.
+
+so we need to handle that state between rendering a component and loading the code onto webpage. 
+By using Suspense component by react library.
+
+And we need to give suspense a fallback to what should react render when code is not there.
+
+In fallback we can pass some JSX or shimmer UI.
+
+We can see that effect by slowing down our internet to slow 3G in network.
+
+This is very very powerful an dour large scale application is optimized.
