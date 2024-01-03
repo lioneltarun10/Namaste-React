@@ -1,0 +1,44 @@
+First way of writing css is normal CSS. Like we did in our app.
+second way is SASS. 
+But these 2 ways are not recommened wasy for writing CSS for big large sale applications.
+
+Third way is Styled components.
+We can choose this with react application.
+
+Material UI , bootstrap , chakra UI , Ant Design - These are some UI frameworks which we can use.
+
+Fourth way - Tailwind CSS.
+
+Tailwind CSS
+
+npm install -D tailwindcss postcss
+npx tailwindcss init
+
+postcss is a tool for transforming css with javascript. Tailwindcss uses postcss behind the scenes.
+
+npx tailwindcss init created a tailwind.config.js configuration file for tailwind.
+
+we need to create a configuration file for postcss also.We do it manually as shown in tailwind css website for parcel.
+Copy text in tailwindcss website and paste in config file of postcss.
+
+Important!!
+Tailwind offers classname automatically for every css we want to write in our app.
+
+Install Tailwind css Intellisense - one of best vscode extensions for taiwind.
+
+If we want to have a specific width like 200px , but suppose there's no class provided by tailwind for it. Then we can do it int he following way - 
+ className="m-4 p-4 w-[200px]" 
+
+ Same applies for other properties like height,etc.
+
+ Pros of tailwindcss - 
+ - no need to move between files ot write css.
+ - initial learning curve will be there , but after that we remember things and writing css becomes very very easy
+ - Tailwindcss is very light weight
+   - Parcel will only import the css which is used in our app , even though tailwindcss has thousands of classes.
+   - suppose m-4 class is used many times in code , but we will import m-4 only once , and suppose shadow class is not used at all , we do not import it at all. That's why taiwindcss is very light.
+- we can build complex UI.   
+
+ COns of tailwindcss -
+ - If we want to apply lot of css to a class , it will make our code look ugly.
+ - Code becomes little less readable for very long css classes on an element.
