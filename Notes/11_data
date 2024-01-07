@@ -1,0 +1,269 @@
+Higher Order Components - It is a function which takes a component and returns a component.
+
+It takes an existing component , and enhances it , add features , then returns a new component.
+
+We want to build a feature where some restaurant cards will have "Promoted" feature on top of card.That means that restaurant is being promoted by our app(swiggy).
+
+We will take our restaurant card , add promoted label and return a new restaurant card (component) , 
+since higher order components return a component , and a component is nothing but a function , so we return a function which returns a JSX.
+i.e export const withPromotedLabel = (RestaurantCard) =>{
+    return (props) => {
+      return (
+        <div>
+          <label className="absolute bg-black text-white m-2 p-2 rounded-lg">Promoted</label>
+          <RestaurantCard {...props}/>
+        </div>
+      )
+    }
+  }
+
+Higher Order Components are pure functions.  They do not change the inputted component at all , they just render some extra features along with inputted component , then returns a new component.
+
+All react applications have two layers - 
+1) UI layer
+2) Data layer
+
+UI layer is powered by Data layer
+
+If we can manage data properly , our app will be super fast.
+
+UI layer is mostly consisting of JSX.
+Data layer is state variables , local variables , props,etc.
+
+Managing Data layer -
+
+We will build the menu page such that recommended items , main course , starters ,etc come in different sections similar to swiggy.
+
+Inside the restaurant menu data , we found all categories like recommened , main course ,etc but also we found categories like veg or non-veg filter , restaurant address , but the differentiating factor for us is , for the item categories we have @type = "type.googleapis.com/swiggy.presentation.food.v2.ItemCategory".
+So we filtered our data based on that.
+
+const categories = resInfo?.cards[2]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(c=> c.card?.card?.["@type"] === 
+"type.googleapis.com/swiggy.presentation.food.v2.ItemCategory"
+)
+
+Now we got categories , so now we will build "Accordian" for each category , similar to swiggy UI.
+
+We built accordian header and body , but now we want to build functionality such that 
+on click of header , we should show and hide the body. That is done in data layer with the help of
+state variable.
+
+Now , we have built open and close feature in accordian , other task is
+when we open one accordian , we should close all other accordians.
+
+A tool which is very helpful for debuging is 
+"react dev tools extension".
+
+When we install it , our console will get 2 super powers. We can see 2 more options "components" and profiler" along with network , performance and all.
+
+This is very import extension!!!
+components option - 
+If we click on a component , it will show the data layer of that component.
+
+So we can also call this representation of virtual DOM.we have both UI layer and data layer shown by this extension. It's very very useful for debbuging.
+It shows the whole heirarchy of components starting from browserRouter to each and every react element and component , we can learn a lot by seeing the UI layer.
+
+Profiler option - 
+This profiler records whatever we do in our react application.
+
+After starting recording , we can do some stuff on app , then after stopping the recording , it shows all the components we visite d, the time it takes to load onto page , all files were visited on going to some page or clivking on something.
+
+
+TAASK - when we open one accordian , we should close all other accordians.
+
+We know that all the categories (recommened , tiffins,etc) have their own showItems state variable.
+
+But we want all other categories to collapse on expanding some category.
+
+It is very tough to build this kind of feature , because each category has their own state which controls the collapse and expand of that category.
+
+So we don't want to give power of collapse and expand to the category component, we will give that power to the parent of this child.
+
+We will give that power to RestaurantCategory , and not to RestaurantCategory. We will pass that state variable as props to RestaurantCategory.
+
+That is how we can expand and collapse any category from the parent component.
+
+This is known as controlled COMPONENT.
+
+we have controlled components and uncontrolled components.
+
+This is a very famous interview question!!
+
+Controlled component is dependent on parent component on what to do.
+If the component can do things on it's own without depending on parent component, it is uncontrolled component.
+
+Now , we are using state variable in parent to comtrol the expand collapse of child component.
+How can i change state variable of my parent when I click on a accordian ?
+
+It's not possible directly , but it's possible indirectly.
+
+we will call our setShowIndex of state variable though a function which is passed to child component.
+<RestaurantCategory 
+                  key={category?.card?.card?.title} 
+                  data={category?.card?.card}
+                  showItems={index === showIndex?true:false}
+                  setShowIndex = {()=>setShowIndex(index)}
+                  />
+
+
+This is a concept of lifting the state up. We lifted our state from child component to parent component.
+
+website link to study - https://react.dev/learn/sharing-state-between-components#lifting-state-up-by-example
+
+This is very important concept!!!.
+
+concept - props drilling
+
+When application becomes very big , passing props from component to component becomes difficult.
+
+Data foloow's in one direction , from parent to childfren , in react.
+
+suppose component heirarchy is A -> B -> C
+
+If we want to pass data from  to A to C , we cannot pass directly , we definitely have to pass to B , then only to c . 
+
+We cannot do this if we have to pass data to very deep child components in big applications.
+The component B is not using data provided by component A.
+
+This is known as "props drilling" because we are drilling the props down to the compoennts.
+Read on react website.
+
+We should avoid props drilling.
+
+React gives use access to "react context" to avoid props drilling.
+
+Example of data which all components need - 
+Logged in user data , theme (light and dark theme)
+
+That's why We hold our data inside a context which can be accessed anywhere in the app.
+
+context solves the problem of props drilling.
+
+Context is a global thing , so we keep them in utils.(not a rule)
+
+By using createContext method from react , we can create a context.
+
+We get a react hook "useContext" to use that context anywhere.
+
+const data = useContext(UserContext)
+
+We can have as many context as we want in react application.
+
+Should we keep all data inside context?So we don't have to pass props?
+
+NO , we will keep data in context which is needed at multiple levels of react application.
+
+Can we use useContext in class component?
+
+No , we don't have hook's in class component , so we cannot use useContext there.
+EX- About component
+
+So how do we access context in class based component.
+
+We can access using UserComponent.Consumer component by react.In which we have to pass jsx by a callback function.
+
+console.log("parent render");
+        return (
+            <div>
+                <h1>About Class component</h1>
+                <div>
+                    loggedIn User
+                    <UserContext.Consumer>
+                        {({loggedInUser}) => <h1 className="text-xl font-bold">{loggedInUser}</h1>}
+                    </UserContext.Consumer> 
+                </div>
+                <h2>This is Namaste React Web Series</h2>
+                
+
+So we have 2 ways , useContext hook and UserContext.Consumer component to access usercontext.
+
+So we have learned how to consume context at any place in app.
+But what if want to update the data of context?
+
+We will wrap our app.js where we are calling all components with UserContext.Provider component by react and set value inside it with data from API.
+
+const [userName,setUserName] = useState();
+
+  // authentication
+  useEffect(()=>{
+    // make an api call and set username and password
+    const data = {
+      name:"unnam tarun"
+    }
+
+    setUserName(data.name);
+  },[])
+
+  return (
+    <UserContext.Provider value={{loggedInUser:userName}}>
+  <div className="app">
+      <Header />
+      <Outlet />
+  </div>
+  </UserContext.Provider>
+  )
+
+This way now all components will have access to data which came from API call , as we have set value of loggedInUser to api data , and components will not take default value which we have set while creating UserContext. 
+
+We are overriding the default value by providing data from api.
+
+We have wrapped our whole app with context.provider , that's why we are ablt to access the context from anywhere. Suppose if we had wrapped only the header with the provider , only our header has updated values from API. All other components which are not children of header will have default value from the context.
+
+Now suppose our whole app with one user context provider , and header component with another usercontext provider , is it correct or not??
+
+It is perfectly valid code , header will use data from it's provider , whole other app will use data from their provider. And if any other compoennt is outside the App component , since taht component is not wrapped under any provider , it will use default value from context.
+i.e -  return (
+    // Default value
+    <UserContext.Provider value={{loggedInUser:userName}}>
+      {/* Unnam Tarun */}
+  <div className="app">
+  <UserContext.Provider value={{loggedInUser:"elon musk"}}>
+    {/* elon musk */}
+      <Header />
+      </UserContext.Provider>
+      <Outlet />
+  </div>
+  </UserContext.Provider>
+  )
+
+  Now we want to update our user context from an input box in body component. How can we do that?
+
+  We are setting the data of user context in app component, then how can we set the data from body component?
+
+  we can pass the setUserName function also from the provider.
+
+   <UserContext.Provider value={{loggedInUser:userName,setUserName}}>
+      {/* Unnam Tarun */}
+  <div className="app">
+      <Header />
+     
+      <Outlet />
+  </div>
+  </UserContext.Provider>
+
+  And in body component , we can do the above task in the following way
+  <div className="search m-4 p-4 flex items-center">
+              <label className="m-2">UserName </label>
+              <input 
+              className="border border-black p-2" 
+              value = {loggedInUser}
+              onChange={(e)=>{
+                setUserName(e.target.value)
+              }}/>
+            </div>
+
+So on the fly , we are able to change the value od user context , and since all cards are using the usercontext , they will also re-render when we change value in input box.    
+
+It is not only changing in body component , but in all component where ever user context is being used.
+
+Data management library -> REDUX
+What is difference between context and REDUX?
+
+Redux is a state management library which we have to install , it is not available in react.
+But context is available in react , we don't need redux for small and medium scale applications.
+
+Can we build large scale applications by context?
+Redux has become common library in industry and it is scalable , context can also be used for large scale applications , but it's just that redux is used more in industry for huge applications.
+
+
+
+

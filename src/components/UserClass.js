@@ -12,7 +12,7 @@ class UserClass extends React.Component{
             }
         }
         //console.log(props);
-        console.log(this.props.name + " child constructor");
+        // console.log(this.props.name + " child constructor");
     }
 
     componentDidMount(){
@@ -20,7 +20,7 @@ class UserClass extends React.Component{
         this.timer = setInterval(()=>{
             console.log("Namaste React OP");
         },1000)
-        console.log(this.props.name + " child Component Did Mount");
+        // console.log(this.props.name + " child Component Did Mount");
 
     }
 
@@ -34,17 +34,17 @@ class UserClass extends React.Component{
             //code
         }
 
-        console.log("Component Did Update");
+        // console.log("Component Did Update");
     }
 
     componentWillUnmount(){
-        console.log("Component unmounted");
+        // console.log("Component unmounted");
         clearInterval(this.timer)
     }
 
 
     render(){
-         console.log(this.props.name + " child render");
+        //  console.log(this.props.name + " child render");
      const {name,location,avatar_url} = this.state.userInfo
       
         //debugger;
