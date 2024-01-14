@@ -1,0 +1,376 @@
+Redux is not mandatory in our application.
+
+All applications which are built with redux , can also be built without it.
+
+redux and react are different libraries. redux is not part of react.
+redux is not the onlt library which is for state management , zustland is also another state management library.
+
+Redux offers easy debbuging.
+
+we have 2 libraries from redux team - 
+1) React-Redux 
+2) Redux toolkit
+
+redux toolkit is latest and pure way of writing redux.we will use redux toolkit along with react-redux.
+Read documentation on redux toolkit.
+
+We are going to build cart and cart page with redux.
+
+Redux store - It is a big JS object , with lot of data inside it , which is kept at a centralized place.Any component can access this redux store.
+
+We have something called slices in our redux store , which means it contains a small portion of redux store.
+
+we make logical partitions inside redux store , which are nothing but slices. i.e seperate slice for cart data, loggedIn user data , theme related slice, etc.
+
+Cart slice will hold all data of cart. Initially it will be empty.
+
+How will data go into cart slice when we click on add button on an item?
+Redux does not allow to modify data directly into cart slice.
+
+When we click add button , it "dispatches an action" , which will call a function and this function modifies the cart.
+
+The function called by the action is known as "reducer".
+
+when we click on add button , it dispatches an action , which will call the reducer function which updates the slice of our redux store.
+
+This was to write data.
+
+How to read data?
+
+We use something known as selector.
+we will use selector to read the data from our redux store, and this selector will give data to us.
+
+when we use this selector , this phenomenon is known as subscribing to the store.
+
+So if our header component is subscribed to the store , then our component is in sync with the store , and if data changes in store , header component will update automatically.
+
+How to subscribe? Using a selector
+
+So the flow is -
+
+when we click on add button , it dispatches an action , which will call the reducer function which updates the slice of our redux store , and since our header component is subscribed to the store using a selector , the items in cart will increase automatically.
+
+Steps we are going to follow - 
+- install @reduxjs/toolkit and react-redux
+- Build our store
+- connect our store to our app
+- slice (cartSlice)
+- dispatch(action)
+- selector
+
+npm i @reduxjs/toolkit
+npm i react-redux
+
+
+Then we create our store using configureStore function from redux tookit
+
+import { configureStore } from "@reduxjs/toolkit"
+
+const appStore = configureStore({})
+
+export default appStore
+
+
+Now we need to connect our app with the store in app.js
+
+we do it with a provider from react-redux
+
+Since creating a store was a redux thing , that;s why configureStore function is coming from redux toolkit , and since to connect the store to react is different from creatign a store , that's why provider is coming from react-redux library(which is a library for using redux in react)
+
+Now we wrap our whole app inside this provider , so that we have access to the store
+
+    <Provider store={appStore}>
+    // Default value
+    <UserContext.Provider value={{loggedInUser:userName,setUserName}}>
+      {/* Unnam Tarun */}
+  <div className="app">
+      <Header />
+     
+      <Outlet />
+  </div>
+  </UserContext.Provider>
+  </Provider>
+
+  Suppose if we want only a specific part of app to have access to store , we can do that by just wrapping that part of app with the provider.
+
+  Now let's create a slice(cart slice).
+
+  we use createSlice function from redux toolkit , and since creating a slice is redux thing , that's why it is coming from redux toolkit
+
+  we have to give the createSlice a configuration.
+
+   we need to give reducer functions for different actions performed on the cart.
+
+   Actions can be add item , remove item , clear cart. Actions can be thought like API , which needs to be communicated to the cart.
+
+   We have reducer functions for each action which does the modification inside the cart.
+
+   Remember, when we click add , we dispatch an action , which calls a reducer function , that function modifies the state of the cart.
+
+   reducer function takes state of cart(or slice) and action as parameters
+
+   const cartSlice = createSlice({
+    name:'cart',
+    initialState:{
+        items:[]
+    },
+    reducers:{
+        addItem: (state,action)=>{
+            state.items.push(action.payload)
+        },
+        removeItem: (state) => {
+            state.items.pop()
+        },
+        clearCart: (state) => {
+            state.items.length = 0;
+        }
+    }
+})
+
+Since clearCart and removeItem reducers don't need action to perform their modification , that's why we did not give action in parameters.
+
+Now we need to export reducer functions and actions from this slice.
+
+export const {addItem,removeItem,clearCart} = cartSlice.actions
+
+export default cartSlice.reducer
+
+Now we are done creating a slice , we need to add our slice to the store.
+
+Our store will also have reducers, which is for the whole store , and in that reducers we create a reducer for our cart slice in the following way.
+
+import cartReducer from "./cartSlice"
+
+const appStore = configureStore({
+    reducer:{
+        cart: cartReducer
+    }
+})
+
+That's it , we are done creating a slice in our store .
+
+Now we want to show the items in our cart slice in the header, we do that using a selector as we have learned.
+
+Selector is nothing but a hook provided by the react-redux library , and a hook is nothing but a normal JS fucntion.
+
+we are subscribing to the store using a selector
+Selectore gives us access to the store.
+
+We also give to the selector , what part of store to subscribe to.
+
+ const cartItems = useSelector((store) => store.cart.items)
+
+ Now the "cartItems" selector gets access to the items of cart slice .
+
+ That's all , now we can do our actions on the cart slice.
+
+ ADD ITEM FUNCTIONALITY
+
+ Now to dispacth an action on click of add button , we need a hook called useDispatch from the react-redux library.
+
+ const dispatch = useDispatch();  
+const handleAddItem = () => {
+    //dispatch an action
+    dispatch(addItem("pizza"))
+}
+
+The dispatch function takes action as an argument , and the action takes some input depending on it's functionality.
+Then , the dispatch function calls the reducer of the action , which takes the arguments passed.
+
+It will convert our arguments passed into an object in the below way - 
+action =  {
+         payload:"pizza"
+     }
+
+So that reducer function can access the argument in below manner-
+
+ addItem: (state,action)=>{
+            // mutating the state here
+            state.items.push(action.payload)
+        },
+
+Now clickin on add button , our item is added to cart and count of cart increases in header.
+
+Now , there are differences in these onClick handlers
+  onClick={handleAddItem}
+                    onClick={()=> handleAddItem(item)}
+                    onClick={handleAddItem(item)}
+
+First one is when we click , we call the   handleAddItem without any arguments.
+
+Second one is , when we click , it is calling a callback function which in turn is calling handleAddItem with some arguments 
+
+Third one is invalid , as it is directly calling the handleAddItem function with arguments.
+
+Now , we have created cart page , but how do we show our items from the cartslice?
+We need to subscribe to the cart again by using useSelector.
+
+  const cartItems = useSelector((store) => store.cart.items)
+
+    return (
+        <div className="text-center m-4 p-4">
+            <h1 className="text-2xl font-bold">Cart</h1>
+            <div>
+                <ItemList items={cartItems} />
+            </div>
+        </div>
+    )
+
+We will reuse our component ItemList to show UI in cart page , and we page our cartItems into the ItemList component.
+
+Now we can make clear cart functionality too with an action dispatcher , which dispatched the clearCart action of cartSlice.
+
+    const dispatch = useDispatch();
+
+    const handleClearCart = () => {
+        dispatch(clearCart())
+    }
+
+This is how redux works.
+But redux is only this? NO!!
+
+Important!!!
+- 1st mistake
+When we are subscribing to a store using useSelectore hook , we must subscribe to the right portion of the store. This is very important. Otherwise we will have a huge performance hit.
+We can subscribe in the below way also - 
+const store = useSelector((store) => store)
+
+const cartItems = store.cart.items;
+
+But this is less efficient , performance hit if you don't subscribe to right portion of store.
+
+Suppose something is updated in another slice in store , but since we are subscribed to the whole store , our store variable gets updated for all the updates in the store.
+
+But if we write in the below way - 
+ const cartItems = useSelector((store) => store.cart.items)
+
+ we are subscribed to specific slice of the store , and our variable store is updated only for updates of the cart slice.
+
+
+ - 2nd mistake
+ const appStore = configureStore({
+    reducer:{
+        cart: cartReducer
+    }
+})
+
+Here the "reducer" is one big reducer for whole store , which contains reducer for different slices.
+
+But for a slice - 
+const cartSlice = createSlice({
+    name:'cart',
+    initialState:{
+        items:[]
+    },
+    reducers:{
+        addItem: (state,action)=>{
+            // mutating the state here
+            state.items.push(action.payload)
+        },
+        removeItem: (state) => {
+            state.items.pop()
+        },
+        clearCart: (state) => {
+            state.items.length = 0; // []
+        }
+    }
+})
+
+export default cartSlice.reducer
+
+we have "reducers" , which contains multiple small reducer functions for different actions.
+
+When we are exporting the reducers, we export it as one reducer , which is used by the store reducer.
+
+Hostory of redux - 
+
+Earlier when we used to use vanilla redux (older redux) , 
+when we are updating the state , it used to shout 
+"Don't MUTATE STATE"
+The below way is not allowed in vanilla redux.
+addItem: (state,action)=>{
+            // mutating the state here
+            state.items.push(action.payload)
+        }
+
+ What we used to do is , create a copy of the state , and we modify that new state and return that new state.  (returning of newState is mandatory)
+
+ addItem: (state,action)=>{
+            const newState = [...state];
+            newState.items.push(action.payload);
+            return newState
+        }     
+
+
+But in new redux toolkit , we have to(compulsory) mutate the state and that is the only way to do update the state , and here we don't have to return the state.   
+
+But do you know that redux toolkit behind the scenes is actually doing it the first way itself , of making copy and updating that copied state and returning it , but redux toolkit has allowed us to not write all that code , it is handling all this behind the scenes.
+
+"Immer" library is one which finds the difference between original state and mutated state and gives back the new state which is immutable.
+
+Redux is using this 'Immer' library to do this job.
+
+Read the Immer website , see the diagram there of how it works.
+
+So now that's why in clearCart reducer , we did not modify the state directly as 
+
+state = [];
+
+because it won't work.
+clearCart: (state) => {
+    state = [];
+        
+}
+
+you will get answer to this question when you go through immer .
+
+because when we are doin that way , we are not modifying the state , we are just giving a new reference to it. we are not mutating the state.
+
+So to mutate the state , what we can do is - 
+
+clearCart: (state) => {
+    // state = [];
+    state.items.length = 0; 
+}
+
+Another explanation is , the state parameter is a local variable which ahs reference to the actual state of the cartslice.
+
+when we do state = [] , we are just locally changing the variable , but not making changes to the actual state.
+
+ clearCart: (state) => {
+            console.log(state);
+            console.log(current(state));
+            state = [];
+            console.log(state);
+            //state.items.length = 0; // []
+        }
+
+when we do log of state in reducer function , it will not give proper items in console, we ahve to use current(state) to get proper items in the state in console.
+
+"current" is given by redux toolkit.
+
+We can change state in another way , that is to return a new state.
+
+Basically , Redux toolkit says that we can either mutate the exsiting state or return a new state , to make changes in actual state.
+
+Returning new state , will replcae our original state with new state returned.
+
+     clearCart: (state) => {
+            
+            // RTK - either Mutate the existing state or return a new state.
+            //state.items.length = 0; // []
+
+            return { items:[] } ; // this new object will be replaced inside original state
+        }
+
+
+Redux dev tools - chrome extension
+
+It is very very important when we are managing large applications using redux.
+
+Try to play with this extension.
+
+RTK QUERY - Read this documentation in redux toolkit
+(website - https://redux-toolkit.js.org/tutorials/rtk-query)
+
+Explore this RTK query

@@ -27,11 +27,11 @@ const fetchData = async () =>{
 
   const json = await data.json()
 
-  // console.log(json);
+  //  console.log(json);
   //optional chaining
-  setListOfRestaurants(json?.data?.cards[5]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
-  setFilteredRestaurant(json?.data?.cards[5]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
-  // console.log( listOfRestaurants);
+  setListOfRestaurants(json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
+  setFilteredRestaurant(json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
+  //  console.log( listOfRestaurants);
   // console.log(filteredRestaurant);
 }
 
