@@ -1,0 +1,933 @@
+Different types of testing - 
+
+1) manual testing
+
+This is not very efficient.
+If we change something in a feature , we can't test each and everything in the app again.
+
+A single line of code can introduce bug anywhere in the app. So we can't test manually each and everything.
+
+2) writing test cases in code , to test our app.
+
+Types of testing (developer can do)
+- Unit Testing
+- Integration Testing
+- End to End Testing - e2e testing
+
+Unit Testing
+
+Testing a unit of application in isolation.
+Foe example , testing only header component in isolation.
+
+Integration Testing - 
+
+For example , search box is there in our app , which affects many things in app. basically it's integration of many components in our app.
+
+So we test the integration of components with each other , the flow of actions and the state of components before and after.
+
+End to End testing - 
+
+Testing starts from user landing on the website , to user leaving the webiste , testing all the flows of the website.
+
+e2e testing requires different kind's of tools like puppeteer , selenium , etc.
+
+As developer , we are concerned on Unit testing and Integration testing.
+
+Libraries for testing react app.
+
+- React Testing Library
+
+React Testing Library builds on top of DOM Testing Library by adding API's for working with react components.
+
+If we make app using Create React App , testing library already is integrated in the app.
+
+But we did not use create react app , and we made our own app using parcel. So we need to integrate now.
+
+React testing library also uses Jest , which is a delightful Javascript testing framework with a focus on simplicity.
+
+Jest is standard testting framework for testing javascript.
+
+npm i -D @testing-library/react
+npm i -D jest
+
+We need to install some more dependencies to use jest along with babel 
+
+npm install --save-dev babel-jest @babel/core @babel/preset-env
+
+Then we need to configure our babel 
+
+module.exports = {
+  presets: [['@babel/preset-env', {targets: {node: 'current'}}]],
+};
+
+Setting up testing in our app
+- Install React Testing Library (from react testing library website)
+- Install Jest (from jest website)
+- Installed Babel dependencies (from jest website)
+- Configure Babel (from jest website)
+- Configure Parcel Config file to disable babel  transpilation (from parcel website)
+- Jest configuration
+- Install jsdom library (react testing library website)
+
+Parcel automatically has babel inside it , parcel uses babel behind the scenes. babel is a transpiler.
+
+Now we are did configure babel according to our testing , then we are trying to interefere with config of babel which parcel has set for us.
+
+So we will have to change parcel's behaviour , to accomodate our config of babel.
+
+Read the section on Babel from below link - 
+https://parceljs.org/languages/javascript/
+
+What is written is that parcel has it's own default configuration for babel , but if we want to have of own custom configuration , like for jest , we can choose to disable babel transpilation in our app.
+
+we need to make changes in .parcelrc file.
+
+When we do this our config of babel will not conflict with default config of babel by parcel.So now our config of babel is used.
+Now default babel transpilation is disabled.
+
+
+Now , how do we run our test cases on our app?
+
+Remember we have scripts in package.json where we can give commands to run our dependencies
+"scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html",
+    "test": "jest"
+  }
+
+  So , we write command npm run test , it will run our test cases.
+
+- Jest configuration
+npx jest --init
+
+This will initialize jest and create new config file for jest "jest.config.js"
+
+for below question answer is jsdom (browser-like) 
+? Choose the test environment that will be used for testing » - Use arrow-keys. Return to submit.
+    node
+>   jsdom (browser-like)
+
+jsdom is a library which gives us brower like environment , where we can do our testing , we cannot do testing in a real browser.
+
+Now we need to install jsdom.
+In react testing libreray website , under setup page of react testing library , under jest section , we will find that jest 28 or above versions need seperate installation of jsdom , the below version's automatically installs jsdom itself.
+
+  
+  npm install --save-dev jest-environment-jsdom
+  
+  We have successfully configured our testing library.we can start writing testing cases.
+
+  Let's write dummy test case.
+
+when we do npm run test , we find that
+
+testing library will search below path and pattern of files for test cases.
+
+testMatch: **/__tests__/**/*.[jt]s?(x), **/?(*.)+(spec|test).[tj]s?(x)
+
+any files with js or ts extension under __test__ folder will be considered as test files.
+ and
+files with below structure under any folder will be considered.
+
+headers.test.js
+headers.spec.js
+headers.test.ts
+headers.spec.ts
+
+test function - 
+
+It will take 2 arguments , one is description of test , another is callback function .
+
+test("Sum function should calculate the sum of two numbers",() =>{
+    
+    const result = sum(3,4)
+
+    //Assertion 
+    expect(result).toBe(7)
+
+})
+
+Let's start unit testing now for react.
+
+We want to test contact component - unit testing
+
+we will try to render our contact component and see if it loads or not.
+
+We need to render our component to jsdom when we are trying to test a component.
+
+render method is given by @testing-library/react
+
+import { render } from "@testing-library/react"
+
+test("Should load contact us component",() =>{
+
+    render(<Contact />)
+
+})
+
+What ever we render using render method , we can access that by using screen method , and this screen method has lot's of methods which help us in testing if everything rendered properly or not.
+
+we found out that error came , because testing library doesn't support jsx syntax.
+it suggests us to install @babel/preset-react libraray.
+
+npm i -D @babel/preset-react
+
+Then we need to configure our babel config file like this - 
+
+module.exports = {
+    presets: [
+      ['@babel/preset-env', {targets: {node: 'current'}}],
+    ['@babel/preset-react',{runtime: "automatic"}]
+    ],
+  };
+
+So one more step in configuring the testing environment.
+
+Setting up testing in our app
+- Install React Testing Library (from react testing library website)
+- Install Jest (from jest website)
+- Installed Babel dependencies (from jest website)
+- Configure Babel (from jest website)
+- Configure Parcel Config file to disable babel  transpilation (from parcel website)
+- Jest configuration
+- Install jsdom library (react testing library website)
+- Install @babel/preset-react to make JSX work in test cases. 
+- Include @babel/preset-react inside my babel config file.
+
+
+What is this @babel/preset-react?
+
+Babel is a transpiler , that means it converts code from onr form to another. This @babel/preset-react is helping the testing library to convert JSX or react language to HTML which our testing library understands.
+
+Now if we run , we get another error saying -
+toBeInTheDocument is not a function.
+
+we need another library called @testing-library/jest-dom. 
+
+So one more step in configuring the testing environment.
+
+Setting up testing in our app
+- Install React Testing Library (from react testing library website)
+- Install Jest (from jest website)
+- Installed Babel dependencies (from jest website)
+- Configure Babel (from jest website)
+- Configure Parcel Config file to disable babel  transpilation (from parcel website)
+- Jest configuration
+- Install jsdom library (react testing library website)
+- Install @babel/preset-react to make JSX work in test cases. 
+- Include @babel/preset-react inside my babel config file.
+- Install npm i -D @testing-library/jest-dom 
+
+
+Now when we run we can see that test cases have passed.
+
+test("Should load contact us component",() =>{
+
+    render(<Contact />)
+   //Querying
+    const heading = screen.getByRole("heading")
+
+    //Assertion
+    expect(heading).toBeInTheDocument();
+
+})
+
+screen.getByRole("heading") - There are roles defined by jest , by which we can get an element using getByrole method.
+
+Another method is getByText.
+
+const heading = screen.getByText("Submit")
+
+Whenever our test fails , jest shows the whole HTML which was rendered onto page.
+
+When we do conole.log(heading) , we will get an object by Name HTMLHeadingElement .
+
+what is this? Is this a HTML element?
+
+No!!
+
+It is a react element ,remember when we render JSX , that JSX is converted to React element , and that React element is nothing but an object.
+
+That means screen.getByText("Submit") returns a reactfibernode/react element/ Piece of JSX / Object.
+
+
+Now we want to test if 2 input boxes are loaded when Contact component is rendered.
+
+test("Should load 2 input boxes on the Contact component",() => {
+
+   render(<Contact />)
+   //Querying
+   const inputBoxes = screen.getAllByRole("textbox")
+
+   console.log(inputBoxes.length); 
+
+   expect(inputBoxes.length).toBe(2)
+
+
+})
+
+we can also write-
+expect(inputBoxes.length).not.toBe(3) 
+
+
+Suppose there are 20 test cases , 5 are testing contact component , 5 are testing restaurant cards , etc.
+
+We can group the test cases in the below manner.
+
+describe("Contact Us page test cases",() => {
+
+    test("Should load contact us component",() =>{
+
+        render(<Contact />)
+       //Querying
+        const heading = screen.getByRole("heading")
+        //console.log(heading);
+        //Assertion
+        expect(heading).toBeInTheDocument();
+    
+    })
+    
+    test("Should load button inside Contact component",() =>{
+    
+        render(<Contact />)
+        //Querying
+        const button = screen.getByText("Submit")
+    
+        //Assertion
+        expect(button).toBeInTheDocument();
+    
+    })
+    
+    test("Should load input name inside Contact component",() =>{
+    
+        render(<Contact />)
+        //Querying
+        const inputName = screen.getByPlaceholderText("name")
+    
+        //Assertion
+        expect(inputName).toBeInTheDocument();
+    
+    })
+    
+    test("Should load 2 input boxes on the Contact component",() => {
+    
+       render(<Contact />)
+      //Querying
+       const inputBoxes = screen.getAllByRole("textbox")
+    
+       console.log(inputBoxes.length); 
+    
+       expect(inputBoxes.length).toBe(2)
+       //expect(inputBoxes.length).not.toBe(3)
+    
+    
+    })
+
+
+})
+
+We can also have describe block inside a describe block.
+
+We have used test function to write our test cases.Instead of test we can use alias of test as "it".
+
+This was unit testing until now.
+
+We want to test Header component.
+
+when we render Header component in test function , it gives error because it does not understand react-redux , Header has store inside it , which is react-redux. The store needs to be provided to the header component using a provider.
+
+Now another error comes that Link component is unknown. 
+Link component is from react-router-dom.
+
+So we need to give this header component a BrowserRouter component.
+
+it("should render header component with login button",() =>{
+
+render(
+<BrowserRouter>
+    <Provider store={appStore}>
+         <Header />
+    </Provider>
+</BrowserRouter>
+)
+
+})
+
+Finally this works properly , it passes when we run npm run test.
+
+it("should render header component with login button",() =>{
+
+render(
+<BrowserRouter>
+    <Provider store={appStore}>
+         <Header />
+    </Provider>
+</BrowserRouter>
+)
+
+const loginButton = screen.getByRole("button",{name:"Login"})
+// const loginButton = screen.getByText("Login")
+
+expect(loginButton).toBeInTheDocument()
+
+})
+
+Another test , we want cart with 0 items 
+
+it("should render header component with cart items 0",() =>{
+
+    render(
+    <BrowserRouter>
+        <Provider store={appStore}>
+             <Header />
+        </Provider>
+    </BrowserRouter>
+    )
+    
+    const cartItems = screen.getByText("Cart (0)")
+    // const loginButton = screen.getByText("Login")
+    
+    expect(cartItems).toBeInTheDocument()
+    
+    })
+
+We can also use regex in the getByText method.
+Suppose we want to find whether "Cart" is present in header component , irrespective of items,we can do as below - 
+
+it("should render header component with a cart item",() =>{
+
+        render(
+        <BrowserRouter>
+            <Provider store={appStore}>
+                 <Header />
+            </Provider>
+        </BrowserRouter>
+        )
+        
+        const cartItems = screen.getByText(/Cart/)
+        // const loginButton = screen.getByText("Login")
+        
+        expect(cartItems).toBeInTheDocument()
+        
+        })  
+
+
+Now , we want to test our click event on Login button , which changes to Logout on click.
+
+we use fireEvent method from @testing-library/react , by which we can simulate many events.
+
+we will simulate click event on the login button.
+
+it("should change Login Button to Logout on click",() =>{
+
+            render(
+            <BrowserRouter>
+                <Provider store={appStore}>
+                     <Header />
+                </Provider>
+            </BrowserRouter>
+            )
+            
+            const loginButton = screen.getByRole("button",{name:"Login"})
+
+            fireEvent.click(loginButton)
+
+            const logoutButton = screen.getByRole("button",{name:"Logout"})
+
+            expect(logoutButton).toBeInTheDocument()
+            
+            })
+
+Now let's write test cases for restaurantCard component.
+
+This component recieved props , so now we need to simulate passing of props while testing.
+
+We create mock data to pass to the component as props.
+
+import  { render,screen } from "@testing-library/react"
+import MOCK_DATA from "../mocks/resCardMock.json"
+import "@testing-library/jest-dom"
+import RestaurantCard from "../RestaurantCard"
+
+it("Should render RestaurantCard component with props data",() => {
+    render(<RestaurantCard resData = {MOCK_DATA} />)
+
+   const name =  screen.getByText("La Pino'z Pizza");
+
+   expect(name).toBeInTheDocument();
+})
+
+Till now we did unit testing , by testing a component in isolation.
+
+Integration Testing - 
+
+Test conjunction of multiple components, integration of multiple components.
+
+We will test the search box feature.
+
+Body component has API call with async/await operation. we need to simulate that  in testing.
+
+when we render Body component , it gives error "fetch is not defined"
+
+It's because fetch is super power of Broswer , and react testing library will run it's test's on jsdom environment , which is like a browser but not a broswer itself.
+
+fetch is not inside javascript , it is given by browser.
+
+so jest doesn't understand fetch because it's rendering the component in jsdom.
+
+Now , we have to mock our fetch function.
+
+Since fetch returns a promise , we will also return a promise in our mock of fetch.
+
+Real fetch function returns a promise , on promise resolve it returns a json , and that json returns a promise ,  on promise resolve it returns us data.
+
+const fetchData = async () =>{
+  const data = await fetch('https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9351929&lng=77.62448069999999&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING')
+
+  const json = await data.json()
+
+}
+
+So we have mocked(simulate) the fetch function in the following way - 
+
+import  { render } from "@testing-library/react"
+import Body from "../Body"
+import MOCK_DATA from "../mocks/mockResListData.json"
+
+global.fetch = jest.fn(() => {
+    return Promise.resolve({
+        json: () =>{
+            return Promise.resolve(MOCK_DATA)
+        }
+    })
+})
+
+We are running npm run test  everytime ,and it's taking time to run tests again and again .
+In npm start (running app) , we saw that only first run will take time , subsequent runs will not take time because of HMR(Hot Module Replacement)
+
+we can do the same here in tests.
+
+In package.json , we do changes - 
+
+ "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html",
+    "test": "jest",
+    "watch-test": "jest --watch"
+  }
+
+  so now the command npm run watch-jest , will run once and when ever we make changes in testcases , it automatically runs the tests without us commanding.
+
+  Now , we run our test case - 
+
+  global.fetch = jest.fn(() => {
+    return Promise.resolve({
+        json: () =>{
+            return Promise.resolve(MOCK_DATA)
+        }
+    })
+})
+
+it("Should render the Body Component with Search",() => {
+    render(<Body />)
+})
+
+It will give us a warning - 
+ When testing, code that causes React state updates should be wrapped into act function.
+
+ we are updating state variable through fetch function inside body component, so we need to wrap the render into act function.
+
+ act function - 
+ import { act } from "react-dom/test-utils"
+
+ It comes from "react-dom/test-utils"
+
+ This act function returns a promise , so we need to use async await.
+
+ it("Should render the Body Component with Search",async () => {
+    await act(async () => render(<Body />))
+    
+})
+
+It will give error saying Link component is not found , then we wrap our body with BrowserRouter
+
+it("Should render the Body Component with Search",async () => {
+    await act(async () => render(
+    <BrowserRouter>
+         <Body />
+    </BrowserRouter>
+    ))
+    
+})
+
+Now we are able find search button.
+
+Now we want to write something into search box , which is a onchange event. we need to trigger that onchange event.
+
+suppose we cannot get input box by any method like getByRole or getByPlaceholder , etc ,then we can use "getByTestId" . 
+
+We go to the body component and add a attribute to the inout box "data-testid" as below
+
+<input 
+              type="text" 
+              data-testid = "searchInput"
+              className="border border-solid border-black" 
+              value={searchText} onChange={(e)=>{
+                setSearchText( e.target.value)
+              }}/>
+
+
+This way we can find any element inside a screen.
+
+Now we need to simulate onchange event in testing.
+
+fireEvent.change(searchInput,{})
+
+Here the second argument is object which is simulating the onchange event in actual code
+
+onChange={(e)=>{
+                setSearchText( e.target.value)
+              }}
+
+The (e) is given to us by Browser , but in jsdom we need to fake or mock the "e".so we give an object in second argument which resembles "e" , inside that we give target , which is object containing "value" and value has the search text "burger" which we actually want to type in search box.
+
+fireEvent.change(searchInput,{target:{value:"burger"}})
+
+Now we want to click the search.
+
+ fireEvent.click(searchBtn)
+
+ Now what should we expect as result?
+
+ we saw that on search of burger in app at current time , we are getting two restaurant's , so we are expect 2 restaurantcards on screen.
+
+ What we can do is give data-testid to all restaurant cards like this - 
+
+ <div 
+      data-testid = "resCard"
+      className="m-4 p-4 w-[250px] rounded-lg bg-gray-100 hover:bg-gray-200">
+        <img 
+        className="rounded-lg" 
+        alt="res-logo" 
+        src={ CDN_URL
+        + cloudinaryImageId}></img>
+
+Now all restaurant card's have the property data-testid. so we can find all restaurant card's having testId as "resCard" after we have searched for burger in search box.
+
+const cards = screen.getAllByTestId("resCard")
+
+Then we expect 2 cards now -
+
+ expect(cards.length).toBe(2)
+
+ It will pass the test case.
+
+ We can also put a testcase before searching for "burger" in search box.
+
+ it("Should Search Res List for burger text input",async () => {
+    await act(async () => render(
+    <BrowserRouter>
+         <Body />
+    </BrowserRouter>
+    ))
+
+    const cardsBeforeSearch = screen.getAllByTestId("resCard")
+
+    expect(cardsBeforeSearch.length).toBe(9)
+
+    const searchBtn = screen.getByRole("button" , {name:"Search"})
+
+    const searchInput = screen.getByTestId("searchInput")
+
+    // console.log(searchInput);
+
+    fireEvent.change(searchInput,{target:{value:"burger"}})
+
+    fireEvent.click(searchBtn)
+
+    //screen should load 2 restaurant card's
+    const cards = screen.getAllByTestId("resCard")
+
+    expect(cards.length).toBe(2)
+    
+})
+
+So we did replicate the exact flow that a user does in the website.
+
+This is a foolProof test of search feature.
+
+Now lets test top rated restaurant.
+
+When we click top rated restaurant button , we get 6 rstaurants at current time.
+so expectation is we get 6 restaurant cards.
+
+it("Should filter top rated restaurant",async () => {
+    await act(async () => render(
+    <BrowserRouter>
+         <Body />
+    </BrowserRouter>
+    ))
+
+    const cardsBeforeFilter = screen.getAllByTestId("resCard")
+
+    expect(cardsBeforeFilter.length).toBe(9)
+
+    const topRatedBtn = screen.getByRole("button",{name: 'Top Rated Restaurants'})
+    console.log(topRatedBtn);
+
+    fireEvent.click(topRatedBtn)
+
+    const cardsAfterFilter = screen.getAllByTestId("resCard")
+    console.log(cardsAfterFilter.length);
+
+    expect(cardsAfterFilter.length).toBe(6)
+
+    
+})
+
+Very Important!!
+Remember we are performing this tests on mockdata , and if we want to perform our tests on latest data , we need to change the mock data with the current data at that time.
+
+So don't expect the test results to be quivalent to the results shown on the website , because the data on website may be different to mock data , to get same results , replace mock data with data from website at that point of time.
+
+Now, we have describe block in which we have many tests. Suppose we want something to happen before running all the tests , we can use beforeAll function.
+
+We also have beforeEach function which will run before each test.
+
+ beforeAll(() => {
+        console.log("Before All");
+    })
+
+    beforeEach(() => {
+        console.log("Before Each");
+    })
+
+We can use beforeEach function to do some cleanup task before running each test case.
+
+We have afterAll function which runs after completing all the tests.
+
+We also have afterEach which runs after completing each test.
+
+    afterAll(() => {
+        console.log("After All");
+    })
+
+    afterEach(() => {
+        console.log("After Each");
+    })
+
+
+Now let's test the add to cart feature , which is very important feature.    
+
+
+RestaurantMenu component does API call , and it has a fetch .
+so we do mock of our fetch using jest.fn()
+
+jest.fn() is used to create a mock function.
+
+So we have written code till - 
+
+global.fetch = jest.fn(() => 
+     Promise.resolve({
+        json: () => Promise.resolve(MOCK_DATA_NAME)
+    })
+)
+
+it("Should Load Restaurant Menu Component", async () => {
+
+    await act( async () => render(<RestaurantMenu />))
+
+   const accordianHeader = screen.getByText("Authentic Andhra Meals (6)")
+   fireEvent.click(accordianHeader)
+
+})
+
+the fireevent has clicked on "Authentic Andhra Meals (6)" accordian , which gives an error because on click of any accordian , ItemList component is called which has code for redux store.
+
+So the erroe which comes is "could not find react-redux context value; please ensure the component is wrapped in a <Provider>"
+
+So we need to wrap our RestaurantMeny component with store provider.
+
+    await act( async () => render(
+    <Provider store={appStore}>
+    <RestaurantMenu />
+    </Provider>
+    ))
+
+Now since we clicked on the accordian , lets assert the list items if they are coming right or not.
+
+So first let's give each item an data-itemid attribute , so we can select them in the testing environment.
+
+ {items.map(item =>( 
+            <div 
+            data-testid = "food-items"
+            key={item.card.info.id} className="p-2 m-2 border-gray-200 border-b-2 text-left flex justify-between">
+                
+                <div className="w-9/12">
+
+  
+   const foodItems =  screen.getAllByTestId("food-items")
+
+   expect(foodItems.length).toBe(6)
+
+
+   Now , we have manu "Add +" buttons , out of which let's click the first button , and on click of it , our cart items in header should change to 1.
+
+   But we don't have a header in our test environment. so we need to render our header component now along with RestaurantMenu component.
+
+    await act( async () => render(
+    <Provider store={appStore}>
+        <Header />
+    <RestaurantMenu />
+    </Provider>
+    ))
+
+    Then , we get error that Link component is not defined , because we get it from react-router-dom.
+
+    So we wrap our components with BrowserRouter component.
+
+        await act( async () => render(
+        <BrowserRouter>
+    <Provider store={appStore}>
+        <Header />
+    <RestaurantMenu />
+    </Provider>
+    </BrowserRouter>
+    ))
+
+So finally we can assert if cart items has changed to 1 in the header.
+
+it("Should Load Restaurant Menu Component", async () => {
+
+    await act( async () => render(
+        <BrowserRouter>
+    <Provider store={appStore}>
+        <Header />
+    <RestaurantMenu />
+    </Provider>
+    </BrowserRouter>
+    ))
+
+   const accordianHeader = screen.getByText("Authentic Andhra Meals (6)")
+   fireEvent.click(accordianHeader)
+
+   const foodItems =  screen.getAllByTestId("food-items")
+
+   expect(foodItems.length).toBe(6)
+
+   expect(screen.getByText("Cart (0)")).toBeInTheDocument();
+
+   const addBtns = screen.getAllByRole("button",{name:"Add +"})
+
+//    console.log(addBtns.length);
+
+  fireEvent.click(addBtns[0])
+
+  const cartCount = screen.getByText("Cart (1)")
+
+  expect(cartCount).toBeInTheDocument();
+
+  fireEvent.click(addBtns[1])
+
+  expect(screen.getByText("Cart (2)")).toBeInTheDocument();
+
+})
+
+Also , on click of add on the item's , we have effect in cart page too. we will have this added items in our cart page, we need to test that , so we need to render Cart component also now.
+
+await act( async () => render(
+        <BrowserRouter>
+    <Provider store={appStore}>
+        <Header />
+    <RestaurantMenu />
+    <Cart />
+    </Provider>
+    </BrowserRouter>
+    ))
+
+In cart component , we were rendering our ItemList compoennt only , the same ItemList which is rendering in RestaurantMenu component.  
+
+And we have given each item the property data-itemid already.
+
+So now on our test environemt , we have items from RestaurantMenu which were 6 , and since we added 2 items to cart , we also have 2 more items on the screen from cart compoennt.
+
+So total is 8 items which are rendering on the screen.
+
+That's why we will expect 8 items on the screen.
+
+expect(screen.getAllByTestId("food-items").length).toBe(8);
+
+Now let's click on clear cart.
+
+When we clear the cart , the items from cart component are gone , so the only items on screen will be items from the RestaurantMenu component which are 6 in total.
+
+fireEvent.click(screen.getByRole("button",{name:"Clear Cart"}))
+
+  expect(screen.getAllByTestId("food-items").length).toBe(6);
+
+And also "Cart is empty , Add Items to the Cart" text should be present in the document.
+
+expect(screen.getByText("Cart is empty , Add Items to the Cart")).toBeInTheDocument()
+
+So the final test case look like this - 
+
+it("Should Load Restaurant Menu Component", async () => {
+
+    await act( async () => render(
+        <BrowserRouter>
+    <Provider store={appStore}>
+        <Header />
+    <RestaurantMenu />
+    <Cart />
+    </Provider>
+    </BrowserRouter>
+    ))
+
+   const accordianHeader = screen.getByText("Authentic Andhra Meals (6)")
+   fireEvent.click(accordianHeader)
+
+   const foodItems =  screen.getAllByTestId("food-items")
+
+   expect(foodItems.length).toBe(6)
+
+   expect(screen.getByText("Cart (0)")).toBeInTheDocument();
+
+   const addBtns = screen.getAllByRole("button",{name:"Add +"})
+
+//    console.log(addBtns.length);
+
+  fireEvent.click(addBtns[0])
+
+  const cartCount = screen.getByText("Cart (1)")
+
+  expect(cartCount).toBeInTheDocument();
+
+  fireEvent.click(addBtns[1])
+
+  expect(screen.getByText("Cart (2)")).toBeInTheDocument();
+
+  expect(screen.getAllByTestId("food-items").length).toBe(8);
+
+  fireEvent.click(screen.getByRole("button",{name:"Clear Cart"}))
+
+  expect(screen.getAllByTestId("food-items").length).toBe(6);
+
+  expect(screen.getByText("Cart is empty , Add Items to the Cart")).toBeInTheDocument()
+
+
+
+})
+
+We need to divide our test case into smaller test cases, because this is not a good way of testing everything in one test case.
+
+Now on the terminal we can see the coverage of the app, that is , the percentage of app we have covered with our test cases which is 95.91% .
+
+If we go to below path coverage>lcov-report>index.html  ,open index.html with live server , we get all coverage data of terminal on the webpage.
+
+We also get exact data on what places are covered and what are not covered , lines of code which are not tested.
+
+With this help , we can write additional tests to cever the uncovered functions , lines of code or functionalities.
+
+We can achieve 100% of coverage in our app.
+
+A good practice is that we should achieve more than 90% coverage.

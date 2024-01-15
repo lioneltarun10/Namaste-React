@@ -66,3 +66,17 @@ Body
 - slice (cartSlice)
 - dispatch(action)
 - selector
+
+# Types of testing (developer can do)
+- Unit Testing
+- Integration Testing
+- End to End Testing - e2e testing
+
+# Setting up testing in our app
+- Install React Testing Library
+- Install Jest
+- Installed Babel dependencies
+- Configure Babel
+- Configure Parcel Config file to disable babel transpilation
+- Jest configuration
+- Install jsdom library (react testing library website)

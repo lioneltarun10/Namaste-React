@@ -56,6 +56,7 @@ const {setUserName,loggedInUser} = useContext(UserContext)
             <div className="search m-4 p-4">
               <input 
               type="text" 
+              data-testid = "searchInput"
               className="border border-solid border-black" 
               value={searchText} onChange={(e)=>{
                 setSearchText( e.target.value)
@@ -83,8 +84,7 @@ const {setUserName,loggedInUser} = useContext(UserContext)
               setFilteredRestaurant(filteredList)
             }}
               
-              >
-              Top Rated Restaurants
+              >Top Rated Restaurants
               </button>
             </div>
             <div className="search m-4 p-4 flex items-center">
